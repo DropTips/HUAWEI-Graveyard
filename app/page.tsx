@@ -46,7 +46,7 @@ export default function HomePage() {
     <main className="flex min-h-screen flex-col">
       <header className="flex flex-col items-center gap-2 px-4 py-12 text-center">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/assets/headstone.svg" alt="华为坟场墓碑图标" width={72} height={72} />
+        <img src="./assets/headstone.svg" alt="华为坟场墓碑图标" width={72} height={72} />
         <h1 className="text-4xl font-bold text-[var(--heading)]">华为坟场</h1>
         <p className="text-sm text-[var(--muted)]">缅怀那些被华为抹杀的产品</p>
       </header>

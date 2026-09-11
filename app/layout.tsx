@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description:
     '华为坟场是一个开源静态站点，用于纪念被华为抹杀或终止的产品与服务。缅怀那些曾经深爱却已消失的华为产品。',
   keywords: ['华为坟场', '被华为抹杀', '华为', '荣耀', '鸿蒙', '抹杀产品'],
-  icons: ['/assets/headstone.svg'],
+  icons: ['./assets/headstone.svg'],
   alternates: { canonical: '/' },
 };
 
