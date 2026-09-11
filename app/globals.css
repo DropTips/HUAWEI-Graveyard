@@ -122,11 +122,12 @@ body {
     position: fixed;
     z-index: 72;
     left: 50%;
-    top: 25vh;
+    top: 16px;
+    bottom: 16px;
     transform: translateX(-50%);
-    max-height: calc(100vh - 25vh - 16px);
     overflow-y: auto;
     opacity: 0;
+    padding: 0;
   }
 
   .lightbox-content::-webkit-scrollbar {
@@ -190,16 +191,7 @@ body {
     flex-direction: column;
   }
 
-  /* 一条连续轴线，JS 动态计算 top/height 精准止于首尾节点 */
-  .flowchart-vertical .flowchart-axis {
-    position: absolute;
-    left: 134px;
-    width: 3px;
-    background-color: var(--flow-red);
-    transform: translateX(-50%);
-    z-index: 0;
-  }
-
+  /* 轴线放在 axis-col 里，flex 居中，自动对齐节点中心 */
   .flowchart-row {
     display: grid;
     grid-template-columns: 120px 28px 1fr;
@@ -207,6 +199,44 @@ body {
     min-height: 80px;
     position: relative;
     z-index: 1;
+  }
+
+  .flowchart-axis-col {
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* 轴线：放在 axis-col 内，用 top/bottom 撑满行高，JS 动态收缩到首尾节点中心 */
+  .flowchart-row .flowchart-axis-col::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 3px;
+    background-color: var(--flow-red);
+    transform: translateX(-50%);
+    z-index: 0;
+  }
+
+  /* 首行：轴线从节点中心开始，不要延伸到顶部 */
+  .flowchart-row:first-child .flowchart-axis-col::before {
+    top: 24px; /* 与节点 margin-top(10px) + 节点高度一半(7px) 对齐 */
+  }
+
+  /* 末行：轴线在节点中心结束，不要延伸到底部 */
+  .flowchart-row:last-child .flowchart-axis-col::before {
+    bottom: calc(100% - 24px);
+  }
+
+  /* JS 动态调整首尾行轴线的精确起止点 */
+  .flowchart-row[data-first='true'] .flowchart-axis-col::before {
+    top: var(--axis-start, 24px);
+  }
+
+  .flowchart-row[data-last='true'] .flowchart-axis-col::before {
+    bottom: var(--axis-end, calc(100% - 24px));
   }
 
   .flowchart-date-col {
@@ -222,12 +252,6 @@ body {
     font-variant-numeric: tabular-nums;
   }
 
-  .flowchart-axis-col {
-    position: relative;
-    display: flex;
-    justify-content: center;
-  }
-
   .flowchart-node {
     margin-top: 10px;
     width: 14px;
@@ -236,6 +260,8 @@ body {
     background-color: #fff;
     border: 3px solid var(--flow-red);
     flex-shrink: 0;
+    position: relative;
+    z-index: 1;
   }
 
   .flowchart-content {
@@ -257,5 +283,27 @@ body {
     color: var(--muted);
     margin: 0;
     line-height: 1.5;
+  }
+
+  /* 移动端适配：缩小日期列，让内容区更宽 */
+  @media (max-width: 480px) {
+    .flowchart-row {
+      grid-template-columns: 88px 24px 1fr;
+    }
+    .flowchart-date {
+      font-size: 13px;
+    }
+    .flowchart-node {
+      width: 12px;
+      height: 12px;
+      border-width: 2px;
+      margin-top: 9px;
+    }
+    .flowchart-title {
+      font-size: 16px;
+    }
+    .flowchart-desc {
+      font-size: 13px;
+    }
   }
 }
