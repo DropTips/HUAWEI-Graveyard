@@ -122,8 +122,8 @@ body {
     position: fixed;
     z-index: 72;
     left: 50%;
-    top: 16px;
-    max-height: calc(100vh - 32px);
+    top: 25vh;
+    max-height: calc(75vh - 16px);
     transform: translateX(-50%);
     overflow-y: auto;
     opacity: 0;
