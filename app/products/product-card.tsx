@@ -33,7 +33,7 @@ export default function ProductCard({ product, today, onClick, expanded, transpa
       <div className="mb-4 flex items-start gap-4">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={isDiscontinued ? './assets/headstone.svg' : './assets/coffin.svg'}
+          src={isDiscontinued ? '/assets/headstone.svg' : '/assets/coffin.svg'}
           alt={isDiscontinued ? '墓碑' : '棺材'}
           width={64}
           height={64}
