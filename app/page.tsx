@@ -48,7 +48,7 @@ export default function HomePage() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="./assets/headstone.svg" alt="华为坟场墓碑图标" width={72} height={72} />
         <h1 className="text-4xl font-bold text-[var(--heading)]">华为坟场</h1>
-        <p className="text-sm text-[var(--muted)]">缅怀那些被华为抹杀的产品</p>
+        <p className="text-sm text-[var(--muted)]">本网站用于纪念被华为抹杀或终止的产品/功能/服务，缅怀那些曾经深爱（或者并非）却已消失的华为产品。</p>
       </header>
 
       {alive.length > 0 && <ProductSection title="存活中" products={alive} today={today} onSelect={select} />}
