@@ -17,49 +17,49 @@ export default function ProductFlowchart({ events }: Readonly<ProductFlowchartPr
     const axis = axisRef.current;
     if (!container || !axis) return;
 
-    const rows = container.querySelectorAll<HTMLElement>('.flowchart-row');
-    if (rows.length === 0) return;
+    let raf = 0;
 
-    // 动态计算轴线 left：取第一个 axis-col 的中心位置
-    const firstAxisCol = rows[0].querySelector<HTMLElement>('.flowchart-axis-col');
-    if (firstAxisCol) {
-      const containerRect = container.getBoundingClientRect();
-      const colRect = firstAxisCol.getBoundingClientRect();
-      const left = colRect.left + colRect.width / 2 - containerRect.left;
-      axis.style.left = `${left}px`;
-      axis.style.transform = 'translateX(-50%)';
-    }
+    const recalc = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const firstCol = container.querySelector<HTMLElement>('.flowchart-axis-col');
+        if (!firstCol) return;
+        const containerRect = container.getBoundingClientRect();
+        const colRect = firstCol.getBoundingClientRect();
+        axis.style.left = `${colRect.left + colRect.width / 2 - containerRect.left}px`;
+      });
+    };
 
-    // 计算首尾节点中心，轴线精准止于首尾
-    const nodes = container.querySelectorAll<HTMLElement>('.flowchart-node');
-    const containerRect = container.getBoundingClientRect();
-    let minCenterY = Infinity;
-    let maxCenterY = -Infinity;
-    nodes.forEach((node) => {
-      const rect = node.getBoundingClientRect();
-      const centerY = rect.top + rect.height / 2 - containerRect.top;
-      if (centerY < minCenterY) minCenterY = centerY;
-      if (centerY > maxCenterY) maxCenterY = centerY;
-    });
+    recalc();
 
-    axis.style.top = `${minCenterY}px`;
-    axis.style.height = `${maxCenterY - minCenterY}px`;
+    // 多次兜底：字体加载、旋转、row 高度变化
+    [50, 150, 350].forEach((d) => window.setTimeout(recalc, d));
+    window.addEventListener('resize', recalc);
+
+    const ro = new ResizeObserver(recalc);
+    ro.observe(container);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', recalc);
+      ro.disconnect();
+    };
   }, [events]);
 
   const sorted = [...events].sort((a, b) => a.date.localeCompare(b.date));
 
   return (
     <div ref={containerRef} className="flowchart-vertical">
-      {/* 单条连续红线 */}
       <div
         ref={axisRef}
         style={{
           position: 'absolute',
+          top: 0,
+          bottom: 0,
           width: 3,
           backgroundColor: 'var(--flow-red)',
           zIndex: 0,
-          top: 0,
-          height: 0,
+          transform: 'translateX(-50%)',
         }}
       />
       {sorted.map((event, i) => (
