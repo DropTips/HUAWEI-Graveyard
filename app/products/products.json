@@ -46,7 +46,7 @@
       "launchDate": "2021-12-23",
       "discontinuedDate": "2026-02-01",
       "description": "由P50 Pocket后独立出的小折叠系列，最后一代为2025年Pocket 2优享版，后由定位阔折叠的Pura X取代",
-      "link": "https://consumer.huawei.com/cn/phones/pocket-2-youxiangban/"
+      "link": ""
     },
     {
       "name": "HarmonyOS 4.3",
@@ -54,7 +54,7 @@
       "launchDate": "2024-11-26",
       "discontinuedDate": "2027-12-31",
       "description": "基于Android 12研发的最后一代安卓鸿蒙双框架系统，将于2027年底停止维护，最后一代搭载机型为2025年Pocket 2优享版，2025年由基于OpenHarmony的HarmonyOS NEXT取代",
-      "link": "https://consumer.huawei.com/cn/harmonyos-4/"
+      "link": ""
     },
     {
       "name": "DBank",
@@ -62,7 +62,7 @@
       "launchDate": "2009-03-01",
       "discontinuedDate": "2017-01-01",
       "description": "早年独立运营的互联网个人网盘，在2016网盘大战中落幕",
-      "link": "https://baike.baidu.com/item/%E5%8D%8E%E4%B8%BA%E7%BD%91%E7%9B%98"
+      "link": ""
     },
     {
       "name": "Mate RS Porsche Design",
@@ -70,7 +70,7 @@
       "launchDate": "2016-11-03",
       "discontinuedDate": "2023-08-29",
       "description": "与保时捷联名的超高端手机，最后一代为2022年Mate50 RS，后由自主超高端品牌非凡大师ULTIMATE DESIGN取代",
-      "link": "https://item.vmall.com/product/comdetail/index.html?prdId=10086297236691&sbomCode="
+      "link": ""
     },
     {
       "name": "MatePad Paper",
@@ -78,7 +78,7 @@
       "launchDate": "2022-03-24",
       "discontinuedDate": "2025-05-28",
       "description": "仅发布一代的墨水屏平板，无后续迭代",
-      "link": "https://item.vmall.com/product/comdetail/index.html?prdId=10086519079492&sbomCode="
+      "link": ""
     },
     {
       "name": "MateStation",
@@ -86,7 +86,7 @@
       "launchDate": "2020-11-01",
       "discontinuedDate": "2025-02-20",
       "description": "台式机系列，2021年推出面向消费平台的一体机MateStation X，2022年推出商用台式机MateStation S，最后一代为搭载Intel处理器的MateStation X 2023",
-      "link": "https://item.vmall.com/product/comdetail/index.html?prdId=10086924715142&sbomCode="
+      "link": ""
     },
     {
       "name": "Freelace",
@@ -94,49 +94,49 @@
       "launchDate": "2019-04-11",
       "discontinuedDate": "2025-06-05",
       "description": "颈挂式降噪蓝牙耳机，最后一代为2023年Freelace Pro 2",
-      "link": "https://consumer.huawei.com/en/headphones/freelace-pro-2/"
+      "link": ""
     },
     {
       "name": "正面实体Home电容指纹",
       "launchDate": "2016-11-03",
       "discontinuedDate": "2018-10-16",
       "description": "前置按压电容指纹，电容按键支持最多两种导航按键方案，最后一代为2018年荣耀10，后被屏下光学指纹取代",
-      "link": "https://item.vmall.com/product/comdetail/index.html?prdId=10086846091615&sbomCode="
+      "link": ""
     },
     {
       "name": "屏下光学指纹",
       "launchDate": "2018-03-27",
       "discontinuedDate": "2025-06-11",
       "description": "屏幕下方光学传感器拍照识别指纹，分超声波和短焦两种方案，最后一代为2025年nova14系列，后为适配HarmonyOS系统功能被侧边指纹取代",
-      "link": "https://item.vmall.com/product/comdetail/index.html?prdId=10086846091615&sbomCode="
+      "link": ""
     },
     {
       "name": "双曲面屏",
       "launchDate": "2016-11-03",
       "discontinuedDate": "2026-03-14",
       "description": "采用柔性AMOLED使屏幕向左右两侧弯曲以获得更高屏占比，最后一代为2025年畅享70X，2023年被P60 Pro等深四微曲屏方案取代",
-      "link": "https://item.vmall.com/product/comdetail/index.html?prdId=10086846091615&sbomCode="
+      "link": ""
     },
     {
       "name": "等深四微曲屏",
       "launchDate": "2020-03-26",
       "discontinuedDate": "2025-11-25",
       "description": "使屏幕向四周弯曲使手机握持更圆润，P40 Pro、P40 Pro+首发，2023年P60 Pro改良，最后一代为2025年Pura 80非标准版，后被Mate 80系列2.5D直屏方案取代",
-      "link": "https://item.vmall.com/product/comdetail/index.html?prdId=10086846091615&sbomCode="
+      "link": ""
     },
     {
       "name": "自由曲面超广角",
       "launchDate": "2020-10-22",
       "discontinuedDate": "2021-07-29",
       "description": "依靠光学镜片本身校正畸变，而非单纯靠软件裁切矫正，仅在Mate40 Pro+/RS上搭载",
-      "link": "https://item.vmall.com/product/comdetail/index.html?prdId=10086846091615&sbomCode="
+      "link": ""
     },
     {
       "name": "7680fps超高速CMOS",
       "launchDate": "2019-09-19",
       "discontinuedDate": "2021-07-29",
       "description": "硬件原生1920fps（HD分辨率，索尼定制电影CMOS），ISP做4倍插帧运算输出7680fps，实现超高速慢动作，仅在Mate30、P40、Mate40三系列非标准版机型搭载",
-      "link": "https://item.vmall.com/product/comdetail/index.html?prdId=10086846091615&sbomCode="
+      "link": ""
     },
     {
       "name": "LEICA联名",
@@ -144,7 +144,7 @@
       "launchDate": "2016-04-06",
       "discontinuedDate": "2022-03-31",
       "description": "2016年首次推出搭载徕卡认证镜头的P9，此后Mate系列、P系列都与徕卡联名，最后一代为P50，后Mate50开始由自主影像品牌XMAGE取代",
-      "link": "https://baike.baidu.com/item/%E5%8D%8E%E4%B8%BAP60",
+      "link": "",
       "events": [
         {
           "date": "2016-04-15",
@@ -209,7 +209,7 @@
       "launchDate": "2012-01-09",
       "discontinuedDate": "2024-04-18",
       "description": "2012年首次推出Ascend P1，最后一代为2023年P60，后全系列更名为Pura",
-      "link": "https://baike.baidu.com/item/%E5%8D%8E%E4%B8%BAP60",
+      "link": "",
       "events": [
         {
           "date": "2012-01-09",
@@ -274,12 +274,12 @@
       ]
     },
     {
-      "name": "MateBook (x86/arm)",
+      "name": "MateBook (x86)",
       "subtitle": "搭载Windows、Linux的笔记本系列",
       "launchDate": "2016-05-26",
       "discontinuedDate": "2025-05-19",
       "description": "面向消费平台的笔记本系列，最后一代为2024年MateBook X Pro，后被搭载麒麟芯片和HarmonyOS的MateBook取代",
-      "link": "https://baike.baidu.com/item/%E5%8D%8E%E4%B8%BAP60"
+      "link": ""
     }
   ]
 }

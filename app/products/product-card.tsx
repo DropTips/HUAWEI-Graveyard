@@ -48,15 +48,17 @@ export default function ProductCard({ product, today, onClick, expanded, transpa
 
       <p className="mb-4 flex-1 leading-relaxed text-[var(--body)]" style={{ fontSize: expanded ? 18 : 14 }}>{summary}</p>
 
-      <a
-        href={product.link}
-        target="_blank"
-        rel="noreferrer noopener"
-        className="inline-flex w-fit items-center gap-1.5 rounded border border-[var(--glass-border)] px-3 py-1.5 text-xs text-[var(--body)] transition-colors hover:border-[var(--muted)] hover:text-[var(--heading)]"
-      >
-        <ExternalLink size={14} />
-        了解更多
-      </a>
+      {product.link && (
+        <a
+          href={product.link}
+          target="_blank"
+          rel="noreferrer noopener"
+          className="inline-flex w-fit items-center gap-1.5 rounded border border-[var(--glass-border)] px-3 py-1.5 text-xs text-[var(--body)] transition-colors hover:border-[var(--muted)] hover:text-[var(--heading)]"
+        >
+          <ExternalLink size={14} />
+          了解更多
+        </a>
+      )}
 
       {expanded && product.events && product.events.length > 0 && (
         <ProductFlowchart events={product.events} />
