@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 
 import { type FlowchartEvent, type Product } from '@/products/product';
 import productsDocument from '@/products/products.json';
+import useToday from '@/use-today';
 
 interface ProductRecord {
   name: string;
@@ -17,8 +18,9 @@ interface ProductRecord {
 
 // 加载 JSON 数据：存活产品排前，按剩余寿命升序；已停产产品按 launchDate 升序
 export default function useProducts(): Product[] {
+  const today = useToday();
+
   return useMemo(() => {
-    const today = new Date();
     return (productsDocument as { products: ProductRecord[] }).products
       .map(
         (record: ProductRecord): Product => ({
@@ -41,10 +43,13 @@ export default function useProducts(): Product[] {
         // 存活产品：剩余寿命由小到大
         if (aActive) return a.discontinuedDate.getTime() - b.discontinuedDate.getTime();
 
-        // 已停产产品：按 launchDate 升序
-        if (!a.launchDate) return 1;
-        if (!b.launchDate) return -1;
+        // 已停产产品：按 launchDate 升序，缺失 launchDate 的统一排在最后（需满足自反性，否则排序不稳定）
+        if (!a.launchDate || !b.launchDate) {
+          if (a.launchDate) return -1;
+          if (b.launchDate) return 1;
+          return a.name.localeCompare(b.name);
+        }
         return a.launchDate.getTime() - b.launchDate.getTime();
       });
-  }, []);
+  }, [today]);
 }

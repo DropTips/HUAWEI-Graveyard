@@ -3,6 +3,9 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  # 页面按「当前时间」计算存活状态与时长，静态导出需要定时重建才能保持准确
+  schedule:
+    - cron: '17 19 * * *'
   workflow_dispatch:
 
 permissions:

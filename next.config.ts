@@ -1,10 +1,11 @@
 import type { NextConfig } from 'next';
 
+import { BASE_PATH } from '@/site';
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  devIndicators: false,
   output: 'export',
-  basePath: '/HUAWEI-Graveyard',
+  basePath: BASE_PATH,
 };
 
 export default nextConfig;

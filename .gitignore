@@ -5,3 +5,6 @@ out
 *.log
 
 tsconfig.tsbuildinfo
+
+# WorkBuddy 工作数据（记忆、笔记等），不纳入版本控制
+.workbuddy/

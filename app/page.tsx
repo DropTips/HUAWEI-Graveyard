@@ -3,6 +3,8 @@
 import { useState } from 'react';
 
 import { type Product, ProductCard, ProductLightbox, useProducts } from '@/products';
+import { asset } from '@/site';
+import useToday from '@/use-today';
 
 interface ProductSectionProps {
   title: string;
@@ -19,10 +21,10 @@ function ProductSection({ title, products, today, onSelect }: Readonly<ProductSe
         <div className="grid-products">
           {products.map((product: Product) => (
             <ProductCard
-              key={product.name + product.subtitle}
+              key={`${product.name}::${product.subtitle ?? ''}`}
               product={product}
               today={today}
-              onClick={(e) => onSelect(product, e.currentTarget)}
+              onActivate={(el) => onSelect(product, el)}
             />
           ))}
         </div>
@@ -33,7 +35,7 @@ function ProductSection({ title, products, today, onSelect }: Readonly<ProductSe
 
 export default function HomePage() {
   const products = useProducts();
-  const today = new Date();
+  const today = useToday();
   const [expanded, setExpanded] = useState<{ product: Product; rect: DOMRect; el: HTMLElement } | null>(null);
 
   const alive = products.filter((product) => product.discontinuedDate > today);
@@ -43,10 +45,11 @@ export default function HomePage() {
     setExpanded({ product, rect: el.getBoundingClientRect(), el });
 
   return (
-    <main className="flex min-h-screen flex-col">
+    // 分组与「距今多久」依赖当前时间，静态 HTML 与客户端首帧可能不同，交由客户端接管
+    <main className="flex min-h-screen flex-col" suppressHydrationWarning>
       <header className="flex flex-col items-center gap-2 px-4 py-12 text-center">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="./assets/headstone.svg" alt="华为坟场墓碑图标" width={72} height={72} />
+        <img src={asset('/assets/headstone.svg')} alt="华为坟场墓碑图标" width={72} height={72} />
         <h1 className="text-4xl font-bold text-[var(--heading)]">华为坟场</h1>
         <p className="text-sm text-[var(--muted)]">本网站用于纪念被华为抹杀或终止的产品/功能/服务，缅怀那些曾经深爱（或者并非）却已消失的华为产品。</p>
       </header>
@@ -61,7 +64,7 @@ export default function HomePage() {
           <p className="mb-1">
             1. 若存在后续迭代产品的系列，产品抹杀日期为下一代产品发布日期；
           </p>
-          <p>
+          <p className="mb-1">
             2. 若不存在后续迭代产品的系列，产品抹杀日期为官方商城下架日期或停止维护前最后一次更新日期。
           </p>
           <p>
