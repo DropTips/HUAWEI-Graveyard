@@ -272,14 +272,6 @@
           "description": "最后一代P命名旗舰，XMAGE自研影像，玲珑四曲屏，可变光圈主摄，昆仑玻璃，搭载骁龙8 Gen1 Plus 4G"
         }
       ]
-    },
-    {
-      "name": "MateBook (x86)",
-      "subtitle": "搭载Windows、Linux的笔记本系列",
-      "launchDate": "2016-05-26",
-      "discontinuedDate": "2025-05-19",
-      "description": "面向消费平台的笔记本系列，最后一代为2024年MateBook X Pro，后被搭载麒麟芯片和HarmonyOS的MateBook取代",
-      "link": ""
     }
   ]
 }
