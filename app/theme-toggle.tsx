@@ -39,9 +39,15 @@ export default function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-label="切换亮暗模式"
-      className="glass fixed right-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-full border border-[var(--glass-border)] text-[var(--heading)] transition-all hover:scale-105"
+      className="theme-toggle glass fixed right-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-full border border-[var(--glass-border)] text-[var(--heading)]"
     >
-      {mounted ? (theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />) : null}
+      {mounted ? (
+        theme === 'dark' ? (
+          <Sun key="sun" size={18} />
+        ) : (
+          <Moon key="moon" size={18} />
+        )
+      ) : null}
     </button>
   );
 }
