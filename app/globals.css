@@ -173,18 +173,17 @@ body::before {
   .lightbox-content {
     position: fixed;
     z-index: 72;
-    left: 50%;
+    /* 水平位置由脚本按视口计算并写入内联 left，与背景层共用同一坐标系：
+       动画期间内容层与背景层应用同一条 transform，文字随卡片一起平移缩放（共享元素过渡）。 */
     /* vh 兜底：不支持 dvh 的旧浏览器 / HarmonyOS 浏览器 */
     top: 25vh;
     top: max(25dvh, calc(env(safe-area-inset-top, 0px) + 16px));
     max-height: calc(75vh - 16px);
     max-height: calc(75dvh - 16px - env(safe-area-inset-bottom, 0px));
-    transform: translateX(-50%);
     overflow-y: auto;
     /* iOS：阻止内容滚到底后橡皮筋带动背景；开启惯性滚动 */
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
-    opacity: 0;
     /* 横屏刘海 / 灵动岛 / Home 指示条避让 */
     padding: 0 env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px)
       env(safe-area-inset-left, 0px);

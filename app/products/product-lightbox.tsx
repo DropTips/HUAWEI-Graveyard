@@ -70,17 +70,23 @@ export default function ProductLightbox({ product, today, fromRect, sourceEl, on
     if (bg && content) {
       bg.classList.add('is-animating');
       bg.style.willChange = 'transform';
+      content.style.willChange = 'transform';
       // 缩回到原卡片的当前位置（背景可能已滚动）
       const targetRect = sourceEl.getBoundingClientRect();
       const bgRect = bg.getBoundingClientRect();
       const scaleX = targetRect.width / bgRect.width;
       const scaleY = targetRect.height / bgRect.height;
-      bg.style.transition = duration > 1 ? `transform ${duration}ms ${EASING}` : 'none';
-      bg.style.transform = `translate(${targetRect.left - bgRect.left}px, ${targetRect.top - bgRect.top}px) scale(${scaleX}, ${scaleY})`;
-      // 文字原地淡出
-      content.style.transition = duration > 1 ? `opacity ${duration * 0.7}ms ease` : 'none';
-      content.style.transitionDelay = '0ms';
-      content.style.opacity = '0';
+      const target = `translate(${targetRect.left - bgRect.left}px, ${targetRect.top - bgRect.top}px) scale(${scaleX}, ${scaleY})`;
+      const transition = duration > 1 ? `transform ${duration}ms ${EASING}` : 'none';
+      bg.style.transition = transition;
+      bg.style.transform = target;
+      // 内容层与背景层共用同一坐标系，应用同一条 transform：
+      // 文字随卡片一起平移缩小回原位（共享元素过渡），不再原地淡出
+      const contentRect = content.getBoundingClientRect();
+      const cscaleX = targetRect.width / contentRect.width;
+      const cscaleY = targetRect.height / contentRect.height;
+      content.style.transition = transition;
+      content.style.transform = `translate(${targetRect.left - contentRect.left}px, ${targetRect.top - contentRect.top}px) scale(${cscaleX}, ${cscaleY})`;
       if (duration > 1) {
         const onEnd = (event: TransitionEvent) => {
           if (event.propertyName === 'transform') {
@@ -178,11 +184,11 @@ export default function ProductLightbox({ product, today, fromRect, sourceEl, on
         e.preventDefault();
         const progress = Math.min(dy / 250, 1);
         bg.classList.add('is-animating');
+        const drag = `translateY(${dy * 0.5}px) scale(${1 - progress * 0.08})`;
         bg.style.transition = 'none';
-        bg.style.transform = `translateY(${dy * 0.5}px) scale(${1 - progress * 0.08})`;
+        bg.style.transform = drag;
         content.style.transition = 'none';
-        content.style.transitionDelay = '0ms';
-        content.style.opacity = String(1 - progress * 0.6);
+        content.style.transform = drag;
       }
     };
     const onTouchEnd = () => {
@@ -196,10 +202,12 @@ export default function ProductLightbox({ product, today, fromRect, sourceEl, on
       }
       if (state.dragging) {
         // 未达阈值：回弹到居中位置
-        bg.style.transition = `transform 300ms ${EASING}`;
-        bg.style.transform = 'translate(0px, 0px) scale(1, 1)';
-        content.style.transition = 'opacity 300ms ease';
-        content.style.opacity = '1';
+        const rebound = `transform 300ms ${EASING}`;
+        const identity = 'translate(0px, 0px) scale(1, 1)';
+        bg.style.transition = rebound;
+        bg.style.transform = identity;
+        content.style.transition = rebound;
+        content.style.transform = identity;
       }
     };
     content.addEventListener('touchstart', onTouchStart, { passive: true });
@@ -207,9 +215,14 @@ export default function ProductLightbox({ product, today, fromRect, sourceEl, on
     content.addEventListener('touchend', onTouchEnd);
     content.addEventListener('touchcancel', onTouchEnd);
 
-    // 按当前视口同步内容层与背景层尺寸位置
+    // 按当前视口同步内容层与背景层尺寸位置。
+    // 内容层不再用 CSS translateX(-50%) 居中，而是直接算出 left 写入内联样式，
+    // 使其与背景层处于同一坐标系，从而可以共用同一条 transform 做共享元素过渡。
     const applyExpandedSize = (): DOMRect => {
-      content.style.width = `${getExpandedWidth()}px`;
+      const width = getExpandedWidth();
+      const left = Math.max(16, (window.innerWidth - width) / 2);
+      content.style.width = `${width}px`;
+      content.style.left = `${left}px`;
       // getBoundingClientRect 自身就会强制同步布局，无需再用 offsetHeight 多触发一次重排
       const rect = content.getBoundingClientRect();
       bg.style.width = `${rect.width}px`;
@@ -219,38 +232,41 @@ export default function ProductLightbox({ product, today, fromRect, sourceEl, on
       return rect;
     };
 
-    // 内容层居中显示，宽度为放大后的卡片宽度
-    content.style.opacity = '0';
+    // 背景层与内容层同尺寸、同位置
     const finalRect = applyExpandedSize();
 
-    // 背景层与内容层同尺寸、同位置
     bg.style.transformOrigin = 'top left';
+    content.style.transformOrigin = 'top left';
     bg.style.willChange = 'transform';
+    content.style.willChange = 'transform';
     bg.classList.add('is-animating');
 
-    // 背景先瞬移到原卡片位置并缩小
+    // 两层先瞬移到原卡片位置并缩小（起始状态一致，文字随卡片一起起跳）
     const scaleX = fromRect.width / finalRect.width;
     const scaleY = fromRect.height / finalRect.height;
+    const initial = `translate(${fromRect.left - finalRect.left}px, ${fromRect.top - finalRect.top}px) scale(${scaleX}, ${scaleY})`;
     bg.style.transition = 'none';
-    bg.style.transform = `translate(${fromRect.left - finalRect.left}px, ${fromRect.top - finalRect.top}px) scale(${scaleX}, ${scaleY})`;
+    bg.style.transform = initial;
+    content.style.transition = 'none';
+    content.style.transform = initial;
 
     // 双 rAF：等起始状态真正提交到合成层后再切换目标值。
     // 单次 rAF 在部分浏览器（尤其首帧）会被合并掉，导致过渡被跳过、弹窗直接闪现。
     let raf2 = 0;
     const raf1 = requestAnimationFrame(() => {
       raf2 = requestAnimationFrame(() => {
-        bg.style.transition = duration > 1 ? `transform ${duration}ms ${EASING}` : 'none';
+        const transition = duration > 1 ? `transform ${duration}ms ${EASING}` : 'none';
+        bg.style.transition = transition;
         bg.style.transform = 'translate(0px, 0px) scale(1, 1)';
-        // 背景放到约 1/3 时文字开始淡入，比等动画完全结束再淡入收尾更快
-        content.style.transition = duration > 1 ? `opacity ${duration * 0.6}ms ease` : 'none';
-        content.style.transitionDelay = duration > 1 ? `${Math.round(duration * 0.35)}ms` : '0ms';
-        content.style.opacity = '1';
+        content.style.transition = transition;
+        content.style.transform = 'translate(0px, 0px) scale(1, 1)';
       });
     });
 
     const settleTimer = window.setTimeout(() => {
       bg.classList.remove('is-animating');
       bg.style.willChange = '';
+      content.style.willChange = '';
     }, duration + 400);
 
     // 旋转屏幕 / 调整窗口：重算尺寸（拖拽过程中不干预）
@@ -291,7 +307,7 @@ export default function ProductLightbox({ product, today, fromRect, sourceEl, on
           isDiscontinued ? 'border border-[var(--glass-border)]' : 'border border-[var(--warn-border)]'
       }`}
       />
-      {/* 内容层：始终居中，只做透明度淡入淡出；支持内部滚动与下滑关闭 */}
+      {/* 内容层：与背景层共用同一条 transform，文字随卡片平移缩放；支持内部滚动与下滑关闭 */}
       <div
         ref={contentRef}
         className="lightbox-content"
