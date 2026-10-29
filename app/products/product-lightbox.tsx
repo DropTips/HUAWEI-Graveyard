@@ -48,6 +48,8 @@ export default function ProductLightbox({ product, today, fromRect, sourceEl, on
   const closingRef = useRef(false);
   // 收尾只执行一次：transitionend 与兜底 setTimeout 都会走到这里
   const finishedRef = useRef(false);
+  // 关闭落位前的「玻璃层↔原卡片」交叉淡化定时器
+  const swapTimer = useRef<number | undefined>(undefined);
   const [closing, setClosing] = useState(false);
   const titleId = useId();
 
@@ -57,6 +59,7 @@ export default function ProductLightbox({ product, today, fromRect, sourceEl, on
     if (finishedRef.current) return;
     finishedRef.current = true;
     window.clearTimeout(closeTimer.current);
+    window.clearTimeout(swapTimer.current);
     onClose();
   }, [onClose]);
 
@@ -76,18 +79,32 @@ export default function ProductLightbox({ product, today, fromRect, sourceEl, on
       const bgRect = bg.getBoundingClientRect();
       const scaleX = targetRect.width / bgRect.width;
       const scaleY = targetRect.height / bgRect.height;
-      const target = `translate(${targetRect.left - bgRect.left}px, ${targetRect.top - bgRect.top}px) scale(${scaleX}, ${scaleY})`;
       const transition = duration > 1 ? `transform ${duration}ms ${EASING}` : 'none';
       bg.style.transition = transition;
-      bg.style.transform = target;
-      // 内容层与背景层共用同一坐标系，应用同一条 transform：
-      // 文字随卡片一起平移缩小回原位（共享元素过渡），不再原地淡出
+      bg.style.transform = `translate(${targetRect.left - bgRect.left}px, ${targetRect.top - bgRect.top}px) scale(${scaleX}, ${scaleY})`;
+      // 内容层不做等比缩小（整篇文字被压进小卡片会显得滑稽且不可读）：
+      // 朝原卡片方向平移一小段并快速淡出，像「内容融回卡片」，
+      // 玻璃背景层独自完成缩回落位，落位后无缝换回原卡片
       const contentRect = content.getBoundingClientRect();
-      const cscaleX = targetRect.width / contentRect.width;
-      const cscaleY = targetRect.height / contentRect.height;
-      content.style.transition = transition;
-      content.style.transform = `translate(${targetRect.left - contentRect.left}px, ${targetRect.top - contentRect.top}px) scale(${cscaleX}, ${cscaleY})`;
+      const dx = targetRect.left + targetRect.width / 2 - (contentRect.left + contentRect.width / 2);
+      const dy = targetRect.top + targetRect.height / 2 - (contentRect.top + contentRect.height / 2);
+      content.style.transformOrigin = 'center center';
+      content.style.willChange = 'transform, opacity';
+      content.style.transition =
+        duration > 1
+          ? `transform ${duration}ms ${EASING}, opacity ${Math.round(duration * 0.45)}ms ease`
+          : 'none';
+      content.style.transform = `translate(${dx * 0.35}px, ${dy * 0.35}px) scale(0.96)`;
+      content.style.opacity = '0';
       if (duration > 1) {
+        // 落位前 ~140ms 开始交叉淡化：显露下方原卡片、玻璃层同步淡出。
+        // 否则玻璃层落位后会先呈现为一张「空卡片」，等内容硬切回来，
+        // 出现二段式的割裂感；交叉淡化让内容还原变成无缝过渡。
+        swapTimer.current = window.setTimeout(() => {
+          sourceEl.style.visibility = 'visible';
+          bg.style.transition = `${transition}, opacity 140ms ease`;
+          bg.style.opacity = '0';
+        }, Math.max(duration - 140, 0));
         const onEnd = (event: TransitionEvent) => {
           if (event.propertyName === 'transform') {
             bg.removeEventListener('transitionend', onEnd);
@@ -288,6 +305,7 @@ export default function ProductLightbox({ product, today, fromRect, sourceEl, on
       cancelAnimationFrame(raf2);
       window.clearTimeout(settleTimer);
       window.clearTimeout(closeTimer.current);
+      window.clearTimeout(swapTimer.current);
       window.removeEventListener('resize', onViewportChange);
       window.removeEventListener('orientationchange', onViewportChange);
       content.removeEventListener('touchstart', onTouchStart);
