@@ -219,6 +219,12 @@ export default function ProductLightbox({ product, today, fromRect, sourceEl, on
     // 内容层不再用 CSS translateX(-50%) 居中，而是直接算出 left 写入内联样式，
     // 使其与背景层处于同一坐标系，从而可以共用同一条 transform 做共享元素过渡。
     const applyExpandedSize = (): DOMRect => {
+      // 测量前必须清掉内容层上可能残留的 transform：
+      // StrictMode 下 effect 会跑两遍，第二遍测量若带着第一遍设置的起始缩放，
+      // 量到的是被缩小后的视觉矩形，背景层会被同步成错误尺寸、缩放比也趋近 1，
+      // 导致背景与文字两层彻底脱同步。
+      content.style.transition = 'none';
+      content.style.transform = 'none';
       const width = getExpandedWidth();
       const left = Math.max(16, (window.innerWidth - width) / 2);
       content.style.width = `${width}px`;
