@@ -82,19 +82,29 @@ export default function ProductLightbox({ product, today, fromRect, sourceEl, on
       const transition = duration > 1 ? `transform ${duration}ms ${EASING}` : 'none';
       bg.style.transition = transition;
       bg.style.transform = `translate(${targetRect.left - bgRect.left}px, ${targetRect.top - bgRect.top}px) scale(${scaleX}, ${scaleY})`;
-      // 内容层不做等比缩小（整篇文字被压进小卡片会显得滑稽且不可读）：
-      // 朝原卡片方向平移一小段并快速淡出，像「内容融回卡片」，
-      // 玻璃背景层独自完成缩回落位，落位后无缝换回原卡片
+      // 内容层与背景层使用同一条缓动、同一时长缩回，节奏与卡片一致：
+      // 之前文字只缩到 0.96，视觉上「卡片在飞、文字不动」，整体感被破坏。
+      // 这里用均匀缩放（两轴缩放比的几何平均）而非直接套用背景的非等比 transform，
+      // 避免宽扁卡片把文字横向压扁成「饼」；平移取整段距离，文字中心与卡片中心同轨迹。
+      // 文字被压到不可读的问题交给淡出解决：缩到前 ~45% 时已经隐去。
       const contentRect = content.getBoundingClientRect();
-      const dx = targetRect.left + targetRect.width / 2 - (contentRect.left + contentRect.width / 2);
-      const dy = targetRect.top + targetRect.height / 2 - (contentRect.top + contentRect.height / 2);
-      content.style.transformOrigin = 'center center';
+      // 均匀缩放，比例取宽度比：文字最终宽度正好等于卡片宽度，
+      // 与卡片主导轴（宽）的缩小节奏逐帧一致，最大化整体感；
+      // 不直接套用背景的非等比 transform，避免文字被横向压扁。
+      const shrink = targetRect.width / contentRect.width;
+      // 原点始终用左上角（与打开时一致，中途改 origin 会让元素瞬跳），
+      // 缩放后的居中位置由平移量反推得出
+      const tx = targetRect.left + (targetRect.width - contentRect.width * shrink) / 2 - contentRect.left;
+      const ty = targetRect.top + (targetRect.height - contentRect.height * shrink) / 2 - contentRect.top;
+      content.style.transformOrigin = 'top left';
       content.style.willChange = 'transform, opacity';
+      // 淡出用 ease-in：前 ~100ms 保持较实，看得到文字在随卡片缩小，
+      // 之后快速消隐，不会缩到不可读的程度
       content.style.transition =
         duration > 1
-          ? `transform ${duration}ms ${EASING}, opacity ${Math.round(duration * 0.45)}ms ease`
+          ? `transform ${duration}ms ${EASING}, opacity ${Math.round(duration * 0.55)}ms ease-in`
           : 'none';
-      content.style.transform = `translate(${dx * 0.35}px, ${dy * 0.35}px) scale(0.96)`;
+      content.style.transform = `translate(${tx}px, ${ty}px) scale(${shrink})`;
       content.style.opacity = '0';
       if (duration > 1) {
         // 落位前 ~140ms 开始交叉淡化：显露下方原卡片、玻璃层同步淡出。
